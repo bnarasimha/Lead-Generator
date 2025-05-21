@@ -1,43 +1,91 @@
-let recordBtn = document.getElementById('recordBtn');
-let stopBtn = document.getElementById('stopBtn');
-let audioPlayback = document.getElementById('audioPlayback');
-let audioFileInput = document.getElementById('audioFile');
-let uploadBtn = document.getElementById('uploadBtn');
-let uploadForm = document.getElementById('uploadForm');
-
 let mediaRecorder;
 let audioChunks = [];
 
-recordBtn.onclick = async function() {
-    audioChunks = [];
-    let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.start();
-    recordBtn.disabled = true;
-    stopBtn.disabled = false;
-    mediaRecorder.ondataavailable = e => {
-        audioChunks.push(e.data);
-    };
-    mediaRecorder.onstop = e => {
-        let blob = new Blob(audioChunks, { type: 'audio/wav' });
-        let url = URL.createObjectURL(blob);
-        audioPlayback.src = url;
-        audioPlayback.style.display = 'block';
-        // Set file input for upload
-        let file = new File([blob], 'recording.wav', { type: 'audio/wav' });
-        let dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        audioFileInput.files = dataTransfer.files;
-        uploadBtn.disabled = false;
-    };
-};
+function setupRecorder() {
+    const recordBtn = document.getElementById('recordBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const audioPlayback = document.getElementById('audioPlayback');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadForm = document.getElementById('uploadForm');
 
-stopBtn.onclick = function() {
-    mediaRecorder.stop();
-    recordBtn.disabled = false;
-    stopBtn.disabled = true;
-};
+    if (uploadBtn) uploadBtn.style.display = 'none';
+    if (uploadForm) {
+        uploadForm.onsubmit = function(e) {
+            e.preventDefault();
+            return false;
+        };
+    }
 
-uploadForm.onsubmit = function() {
-    uploadBtn.disabled = true;
-}; 
+    if (recordBtn) {
+        recordBtn.onclick = async function() {
+            audioChunks = [];
+            let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = e => {
+                audioChunks.push(e.data);
+            };
+            mediaRecorder.onstop = function() {
+                let blob = new Blob(audioChunks, { type: 'audio/wav' });
+                let url = URL.createObjectURL(blob);
+                if (audioPlayback) {
+                    audioPlayback.src = url;
+                    audioPlayback.style.display = 'block';
+                }
+                console.log('Calling sendAudioForTranscription');
+                sendAudioForTranscription(blob);
+            };
+            mediaRecorder.start();
+            recordBtn.disabled = true;
+            stopBtn.disabled = false;
+        };
+    }
+
+    if (stopBtn) {
+        stopBtn.onclick = function() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                recordBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+        };
+    }
+}
+
+function sendAudioForTranscription(blob) {
+    showLoading();
+    let formData = new FormData();
+    formData.append('file', blob, 'recording.wav');
+    fetch('/upload-audio', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(html => {
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(html, 'text/html');
+        let newContainer = doc.querySelector('.container');
+        document.querySelector('.container').replaceWith(newContainer);
+        setupRecorder(); // Re-attach listeners
+    })
+    .catch(err => {
+        hideLoading();
+        alert('Transcription failed. Please try again.');
+    });
+}
+
+function showLoading() {
+    let container = document.querySelector('.container');
+    let loading = document.createElement('div');
+    loading.className = 'loading-indicator';
+    loading.style.margin = '1.5rem 0';
+    loading.innerHTML = '<b>Transcribing...</b>';
+    container.appendChild(loading);
+}
+
+function hideLoading() {
+    let loading = document.querySelector('.loading-indicator');
+    if (loading) loading.remove();
+}
+
+// Initial setup
+setupRecorder(); 
