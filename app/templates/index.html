@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lead Generator - Audio Requirement</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(60, 60, 60, 0.15);
+            padding: 2.5rem 2rem 2rem 2rem;
+            max-width: 420px;
+            width: 100%;
+            margin: 2rem;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            color: #f76b1c;
+        }
+        h2 {
+            font-size: 1.1rem;
+            color: #333;
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        button {
+            background: linear-gradient(90deg, #fda085 0%, #f6d365 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0.5rem 0.3rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            box-shadow: 0 2px 8px rgba(253, 160, 133, 0.08);
+        }
+        button:disabled {
+            background: #eee;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+        audio {
+            margin-top: 1rem;
+            width: 100%;
+        }
+        form {
+            margin-top: 1.5rem;
+        }
+        .result-section {
+            background: #f9f6f2;
+            border-radius: 10px;
+            padding: 1.2rem 1rem;
+            margin-top: 1.2rem;
+            box-shadow: 0 2px 8px rgba(253, 160, 133, 0.06);
+            text-align: left;
+        }
+        .result-section ul {
+            padding-left: 1.2rem;
+        }
+        .result-section li {
+            margin-bottom: 0.5rem;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.2rem 0.5rem 1.5rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 Lead Generator</h1>
+        <p style="color:#555; margin-bottom:1.5rem;">Record your requirement and let AI extract the details for you.</p>
+        <button id="recordBtn">Start Recording</button>
+        <button id="stopBtn" disabled>Stop Recording</button>
+        <audio id="audioPlayback" controls style="display:none;"></audio>
+        <form id="uploadForm" method="post" enctype="multipart/form-data" action="/upload-audio">
+            <input type="file" id="audioFile" name="file" style="display:none;" />
+            <button type="submit" id="uploadBtn" disabled>Upload</button>
+        </form>
+        {% if transcript %}
+        <div class="result-section">
+            <h2>Transcription</h2>
+            <p>{{ transcript }}</p>
+        </div>
+        {% endif %}
+        {% if extracted %}
+        <div class="result-section">
+            <h2>Extracted Information</h2>
+            <ul>
+                <li><b>User:</b> {{ extracted.user }}</li>
+                <li><b>Query/Requirement:</b> {{ extracted.query }}</li>
+                <li><b>Action:</b> {{ extracted.action }}</li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+    <script src="/static/recorder.js"></script>
+</body>
+</html> 
