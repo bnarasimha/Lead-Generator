@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            background: linear-gradient(120deg, #4f8cff 0%, #235390 100%);
             min-height: 100vh;
             margin: 0;
             font-family: 'Inter', sans-serif;
@@ -18,28 +18,29 @@
         .container {
             background: #fff;
             border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(60, 60, 60, 0.15);
+            box-shadow: 0 8px 32px rgba(60, 60, 60, 0.13);
             padding: 2.5rem 2rem 2rem 2rem;
-            max-width: 420px;
+            max-width: 440px;
             width: 100%;
             margin: 2rem;
             text-align: center;
         }
         h1 {
             font-size: 2rem;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 1.2rem;
-            color: #f76b1c;
+            color: #2563eb;
+            letter-spacing: -1px;
         }
         h2 {
             font-size: 1.1rem;
-            color: #333;
+            color: #1e293b;
             margin-top: 2rem;
             margin-bottom: 0.5rem;
             font-weight: 600;
         }
         button {
-            background: linear-gradient(90deg, #fda085 0%, #f6d365 100%);
+            background: linear-gradient(90deg, #2563eb 0%, #4f8cff 100%);
             color: #fff;
             border: none;
             border-radius: 8px;
@@ -49,11 +50,11 @@
             margin: 0.5rem 0.3rem;
             cursor: pointer;
             transition: background 0.2s, transform 0.2s;
-            box-shadow: 0 2px 8px rgba(253, 160, 133, 0.08);
+            box-shadow: 0 2px 8px rgba(79, 140, 255, 0.08);
         }
         button:disabled {
-            background: #eee;
-            color: #aaa;
+            background: #e0e7ef;
+            color: #a0aec0;
             cursor: not-allowed;
         }
         audio {
@@ -64,11 +65,11 @@
             margin-top: 1.5rem;
         }
         .result-section {
-            background: #f9f6f2;
+            background: #f1f5fa;
             border-radius: 10px;
             padding: 1.2rem 1rem;
             margin-top: 1.2rem;
-            box-shadow: 0 2px 8px rgba(253, 160, 133, 0.06);
+            box-shadow: 0 2px 8px rgba(79, 140, 255, 0.06);
             text-align: left;
         }
         .result-section ul {
@@ -76,6 +77,21 @@
         }
         .result-section li {
             margin-bottom: 0.5rem;
+        }
+        .example-box {
+            background: #e8f0fe;
+            border-left: 4px solid #2563eb;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 0.98rem;
+            color: #334155;
+        }
+        .loading-indicator {
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
         @media (max-width: 600px) {
             .container {
@@ -87,8 +103,8 @@
 <body>
     <div class="container">
         <h1>🎤 Lead Generator</h1>
-        <p style="color:#555; margin-bottom:1.5rem;">Record your requirement and let AI extract the details for you.</p>
-        <div style="background:#f6f8fa;border-left:4px solid #fda085;padding:0.8rem 1rem;margin-bottom:1.5rem;border-radius:8px;text-align:left;font-size:0.98rem;color:#444;">
+        <p style="color:#334155; margin-bottom:1.5rem;">Record your requirement and let AI extract the details for you.</p>
+        <div class="example-box">
             <b>Example:</b><br>
             <i>"Hi, I am John from XYZ company, I am trying to use H100 GPU Dropelts to train a model. Can you help me?"</i>
         </div>
