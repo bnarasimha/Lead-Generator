@@ -38,18 +38,19 @@ async def upload_audio(request: Request, file: UploadFile = File(...)):
         transcript = f"Transcription failed: {e}"
     # Remove temp file
     os.remove(temp_path)
-    # Extract info with LLM
+    # Extract info with LLM (now also extract company)
     extraction_prompt = f"""
     Given the following user requirement, extract:
     1. Who is the user?
-    2. What is the query/requirement?
-    3. What action needs to be taken?
+    2. What is the company (if mentioned)?
+    3. What is the query/requirement?
+    4. What action needs to be taken?
     
     Requirement: '''{transcript}'''
     
-    Respond in JSON with keys: user, query, action.
+    Respond in JSON with keys: user, company, query, action.
     """
-    extracted = {"user": "", "query": "", "action": ""}
+    extracted = {"user": "", "company": "", "query": "", "action": ""}
     try:
         response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -61,7 +62,7 @@ async def upload_audio(request: Request, file: UploadFile = File(...)):
         if match:
             extracted = json.loads(match.group(0))
     except Exception as e:
-        extracted = {"user": "Extraction failed", "query": str(e), "action": ""}
+        extracted = {"user": "Extraction failed", "company": "", "query": str(e), "action": ""}
     return templates.TemplateResponse("index.html", {
         "request": request,
         "transcript": transcript,
